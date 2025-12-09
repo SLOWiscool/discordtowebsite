@@ -1,0 +1,8 @@
+{
+  "name": "discord-snapchat-chat",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "mongodb": "^5.7.0"
+  }
+}
