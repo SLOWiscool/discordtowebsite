@@ -3,45 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Discord-Snapchat Relay</title>
-<style>
-body { font-family: Arial; margin: 2rem; }
-#messages { border: 1px solid #ccc; padding: 1rem; height: 300px; overflow-y: scroll; }
-input, button { padding: 0.5rem; margin-top: 0.5rem; width: 100%; }
-</style>
+<title>Chat</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<h1>Relay Chat</h1>
-<div id="messages"></div>
-<input type="text" id="reply" placeholder="Type a reply..." />
-<button onclick="sendReply()">Send Reply</button>
-
-<script>
-async function fetchMessages() {
-    const res = await fetch('/api/messages');
-    const data = await res.json();
-    const messagesDiv = document.getElementById('messages');
-    messagesDiv.innerHTML = data.map(m => `<b>${m.username}:</b> ${m.content}`).join('<br>');
-}
-
-async function sendReply() {
-    const replyInput = document.getElementById('reply');
-    const content = replyInput.value.trim();
-    if(!content) return;
-    await fetch('/api/messages', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({username: 'SnapchatFriend', content})
-    });
-    replyInput.value = '';
-    fetchMessages();
-}
-
-// Refresh every 2 seconds
-setInterval(fetchMessages, 2000);
-fetchMessages();
-</script>
-
+<div class="container">
+    <h1>Chat</h1>
+    <div id="chat-box"></div>
+    <input type="text" id="message-input" placeholder="Type your message..."/>
+    <button id="send-btn">Send</button>
+</div>
+<script src="client.js"></script>
 </body>
 </html>
