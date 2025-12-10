@@ -46,11 +46,14 @@ function renderMessages(messages) {
     }).join('');
 
     // Populate vertical user list
-    usersSpan.innerHTML = ''; // clear
-    usersSpan.innerHTML = Array.from(usernames).map(([username, avatar]) => {
-        const avatarImg = avatar ? `<img src="${avatar}">` : '';
+  usersSpan.innerHTML = ''; // clear
+usersSpan.innerHTML = Array.from(usernames)
+    .filter(([username]) => username !== MY_NAME) // exclude self
+    .map(([username, avatar]) => {
+        const avatarImg = avatar ? `<img src="${avatar}" class="user-item-avatar">` : `<div class="user-item-avatar-placeholder"></div>`;
         return `<div class="user-item">${avatarImg}<span>${username}</span></div>`;
-    }).join('');
+    })
+    .join('');
 
     chatBox.scrollTop = chatBox.scrollHeight;
 
