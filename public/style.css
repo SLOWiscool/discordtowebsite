@@ -46,6 +46,15 @@ body {
     word-wrap: break-word;
 }
 
+.msg-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    vertical-align: middle;
+    margin-right: 6px;
+}
+
+
 .me {
     background: #FF6B6B;
     margin-left: auto;
