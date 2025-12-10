@@ -1,8 +1,6 @@
 import { MongoClient } from 'mongodb';
 
-// <-- PUT YOUR FULL MONGO URI HERE
 const uri = "mongodb+srv://superslashergamez1:adammiah2@cluster0.hxktk9m.mongodb.net/?retryWrites=true&w=majority";
-
 let cachedClient = null;
 
 async function connectMongo() {
@@ -17,9 +15,11 @@ export default async function handler(req, res) {
     const client = await connectMongo();
     const collection = client.db('discordrelay').collection('messages');
 
+    // Use req.body directly if it's already an object
+    const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+
     // CREATE NEW MESSAGE
     if (req.method === 'POST') {
-        const body = JSON.parse(req.body);
         const { id, username, content, source, ts, avatar, replyTo, mentions } = body;
         if (!id || !username || !content) return res.status(400).json({ error: 'Missing fields' });
 
@@ -44,7 +44,7 @@ export default async function handler(req, res) {
 
     // EDIT MESSAGE
     if (req.method === 'PUT') {
-        const { content } = JSON.parse(req.body);
+        const { content } = body;
         const { id } = req.query;
         await collection.updateOne({ _id: id }, { $set: { content } });
         return res.status(200).json({ success: true });
