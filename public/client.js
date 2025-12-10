@@ -3,7 +3,7 @@ const input = document.getElementById('message-input');
 const sendBtn = document.getElementById('send-btn');
 const API = '/api/messages';
 
-let lastDiscordId = null;
+let lastDiscordTs = 0; // track latest Discord message timestamp
 
 // Request notifications
 if ("Notification" in window && Notification.permission !== "granted") {
@@ -31,20 +31,26 @@ async function fetchMessages() {
     }).join('');
     chatBox.scrollTop = chatBox.scrollHeight;
 
-    // Notify for new Discord messages
-    const newDiscordMsg = data.find(m => m.source === "discord" && m.id !== lastDiscordId);
-    if (newDiscordMsg && Notification.permission === "granted") {
-        new Notification(newDiscordMsg.username, {
-            body: newDiscordMsg.content || "Sent an image/GIF",
-            icon: newDiscordMsg.avatar
-        });
-        lastDiscordId = newDiscordMsg.id;
+    // Notify only for new Discord messages
+    const newDiscordMsgs = data
+        .filter(m => m.source === "discord" && m.ts > lastDiscordTs)
+        .sort((a,b) => a.ts - b.ts);
+
+    for (const msg of newDiscordMsgs) {
+        if (Notification.permission === "granted") {
+            new Notification(msg.username, {
+                body: msg.content || "Sent an image/GIF",
+                icon: msg.avatar
+            });
+        }
+        lastDiscordTs = msg.ts; // update last seen Discord timestamp
     }
 }
 
 async function sendMessage() {
     const content = input.value.trim();
     if (!content) return;
+
     await fetch(API, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -56,6 +62,7 @@ async function sendMessage() {
             ts: Date.now() 
         })
     });
+
     input.value = '';
     fetchMessages();
 }
@@ -63,5 +70,6 @@ async function sendMessage() {
 sendBtn.addEventListener('click', sendMessage);
 input.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
 
+// Poll every 2 seconds
 setInterval(fetchMessages, 2000);
 fetchMessages();
