@@ -3,22 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chat — Varun and Muhammad</title>
+<title>Chat - Varun and Muhamamd</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="top-bar">
-    <div class="user-info" id="header-name">
-        <img id="header-avatar" src="https://i.imgur.com/9QW5G1V.png" class="avatar">
-        <span>Varun & Muhammad</span>
+    <div class="user-info" id="chat-header">
+        <img src="https://i.imgur.com/9QW5G1V.png" class="avatar">
+        <span id="chat-title">Varun & Muhammad</span>
+        <div id="user-list" class="user-list"></div>
     </div>
-</div>
-
-<!-- User list dropdown -->
-<div id="user-list" class="user-list hidden">
-    <b>Users</b>
-    <div id="users"></div> <!-- Each user will be a row with avatar + name -->
 </div>
 
 <div id="chat-box" class="chat-box"></div>
@@ -27,8 +22,6 @@
     <input id="message-input" type="text" placeholder="Send chat">
     <button id="send-btn">&#9658;</button>
 </div>
-
-<audio id="receive-sound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
 
 <script src="client.js"></script>
 </body>
