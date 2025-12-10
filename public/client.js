@@ -23,9 +23,10 @@ function formatTime(ts) {
 
 // Render messages
 function renderMessages(messages) {
-    const usernames = new Set();
+    const usernames = new Map(); // store username → avatar
+
     chatBox.innerHTML = messages.map(m => {
-        usernames.add(m.username);
+        usernames.set(m.username, m.avatar); // store avatar
 
         let mediaHTML = '';
         if (m.image) mediaHTML += `<img src="${m.image}">`;
@@ -44,7 +45,12 @@ function renderMessages(messages) {
                 </div>`;
     }).join('');
 
-    usersSpan.textContent = Array.from(usernames).join(' ');
+    // Populate vertical user list
+    usersSpan.innerHTML = ''; // clear
+    usersSpan.innerHTML = Array.from(usernames).map(([username, avatar]) => {
+        const avatarImg = avatar ? `<img src="${avatar}">` : '';
+        return `<div class="user-item">${avatarImg}<span>${username}</span></div>`;
+    }).join('');
 
     chatBox.scrollTop = chatBox.scrollHeight;
 
@@ -52,6 +58,7 @@ function renderMessages(messages) {
     const lastMsg = messages[messages.length-1];
     if (lastMsg && lastMsg.username !== MY_NAME) sound.play();
 }
+
 
 // Fetch messages
 async function fetchMessages() {
