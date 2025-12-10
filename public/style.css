@@ -26,12 +26,6 @@ body {
     font-size: 18px;
 }
 
-.avatar {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-}
-
 /* --- USER LIST DROPDOWN --- */
 .user-list {
     background: #222;
@@ -64,11 +58,13 @@ body {
     font-size: 14px;
 }
 
-.user-item img {
+.user-item-avatar, .user-item img {
     width: 24px;
     height: 24px;
     border-radius: 50%;
+    flex-shrink: 0;
 }
+
 
 /* --- CHAT AREA --- */
 .chat-box {
