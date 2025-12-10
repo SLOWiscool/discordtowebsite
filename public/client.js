@@ -16,13 +16,14 @@ function formatTime(ts) {
 function renderMessages(messages) {
     chatBox.innerHTML = messages.map(m => {
         let mediaHTML = '';
-        // Images
         if (m.image) mediaHTML += `<img src="${m.image}">`;
-        // GIFs or videos
         if (m.video) mediaHTML += `<video src="${m.video}" autoplay loop muted></video>`;
 
         const cls = m.username === MY_NAME ? 'me' : 'them';
+        const avatarHTML = m.avatar ? `<img src="${m.avatar}" class="msg-avatar">` : '';
+
         return `<div class="message ${cls}">
+                    ${avatarHTML}
                     <b>${m.username}</b>: ${m.content || ''}
                     ${mediaHTML}
                     <span class="timestamp">${formatTime(m.ts)}</span>
@@ -31,6 +32,7 @@ function renderMessages(messages) {
 
     chatBox.scrollTop = chatBox.scrollHeight;
 }
+
 
 // Fetch messages
 async function fetchMessages() {
