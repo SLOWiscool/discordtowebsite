@@ -1,6 +1,6 @@
 import { MongoClient } from 'mongodb';
 
-const uri = "mongodb+srv://superslashergamez1:adammiah2@cluster0.hxktk9m.mongodb.net/?retryWrites=true&w=majority";
+const uri = process.env.MONGO_URI; // Set this in Vercel Environment Variables
 let cachedClient = null;
 
 async function connectMongo() {
@@ -15,46 +15,32 @@ export default async function handler(req, res) {
     const client = await connectMongo();
     const collection = client.db('discordrelay').collection('messages');
 
-    // Use req.body directly if it's already an object
-    const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    let body = req.body;
+    if (typeof body === 'string') body = JSON.parse(body);
 
-    // CREATE NEW MESSAGE
     if (req.method === 'POST') {
-        const { id, username, content, source, ts, avatar, replyTo, mentions } = body;
-        if (!id || !username || !content) return res.status(400).json({ error: 'Missing fields' });
+        const { id, username, content, source, ts, avatar, replyTo, mentions, image, video } = body;
+        if (!id || !username || (!content && !image && !video)) return res.status(400).json({ error: 'Missing fields' });
 
-        await collection.insertOne({ 
-            _id: id, 
-            username, 
-            content, 
-            source, 
-            ts, 
-            avatar, 
-            replyTo, 
-            mentions 
-        });
+        await collection.insertOne({ id, username, content, source, ts, avatar, replyTo, mentions, image, video });
         return res.status(200).json({ success: true });
     }
 
-    // GET ALL MESSAGES
+    if (req.method === 'PUT') {
+        const { content } = body;
+        if (!content) return res.status(400).json({ error: 'Missing content' });
+        await collection.updateOne({ id: req.query.id }, { $set: { content } });
+        return res.status(200).json({ success: true });
+    }
+
+    if (req.method === 'DELETE') {
+        await collection.deleteOne({ id: req.query.id });
+        return res.status(200).json({ success: true });
+    }
+
     if (req.method === 'GET') {
         const messages = await collection.find({}).sort({ ts: 1 }).toArray();
         return res.status(200).json(messages);
-    }
-
-    // EDIT MESSAGE
-    if (req.method === 'PUT') {
-        const { content } = body;
-        const { id } = req.query;
-        await collection.updateOne({ _id: id }, { $set: { content } });
-        return res.status(200).json({ success: true });
-    }
-
-    // DELETE MESSAGE
-    if (req.method === 'DELETE') {
-        const { id } = req.query;
-        await collection.deleteOne({ _id: id });
-        return res.status(200).json({ success: true });
     }
 
     res.status(405).json({ error: 'Method not allowed' });
