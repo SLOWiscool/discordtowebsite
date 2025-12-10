@@ -1,11 +1,13 @@
+/* --- BODY --- */
 body {
     margin: 0;
     background: #111;
-    font-family: Arial;
+    font-family: Arial, sans-serif;
     color: white;
+    position: relative;
 }
 
-/* Header */
+/* --- HEADER --- */
 .top-bar {
     background: #181818;
     height: 65px;
@@ -30,13 +32,13 @@ body {
     border-radius: 50%;
 }
 
-/* User list dropdown */
+/* --- USER LIST DROPDOWN --- */
 .user-list {
     background: #222;
     border: 1px solid #333;
     width: 200px;
     position: absolute;
-    top: 65px; /* right below header */
+    top: 65px; /* below header */
     left: 15px;
     padding: 10px;
     border-radius: 8px;
@@ -50,14 +52,32 @@ body {
     display: none;
 }
 
-/* CHAT AREA */
+.user-list b {
+    margin-bottom: 8px;
+    display: block;
+}
+
+.user-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.user-item img {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+}
+
+/* --- CHAT AREA --- */
 .chat-box {
     padding: 20px;
     height: calc(100vh - 135px);
     overflow-y: auto;
 }
 
-/* Message bubbles */
+/* --- MESSAGE BUBBLES --- */
 .message {
     max-width: 70%;
     padding: 10px 14px;
@@ -107,7 +127,7 @@ body {
     text-align: right;
 }
 
-/* Input Box */
+/* --- INPUT BOX --- */
 .input-area {
     background: #181818;
     padding: 10px;
