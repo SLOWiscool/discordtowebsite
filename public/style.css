@@ -36,26 +36,33 @@ body {
     overflow-y: auto;
 }
 
+/* Message bubbles */
 .message {
     max-width: 70%;
     padding: 10px 14px;
     border-radius: 12px;
     margin: 8px 0;
     font-size: 16px;
+    word-wrap: break-word;
 }
 
-/* Their messages (Blue like Snapchat) */
+.me {
+    background: #FF6B6B;
+    margin-left: auto;
+    border-bottom-right-radius: 4px;
+}
+
 .them {
-    background: #007AFF;
+    background: #3399FF;
     margin-right: auto;
     border-bottom-left-radius: 4px;
 }
 
-/* My messages (Red like Snapchat) */
-.me {
-    background: #FF4155;
-    margin-left: auto;
-    border-bottom-right-radius: 4px;
+/* Media inside messages */
+.message img, .message video {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-top: 5px;
 }
 
 /* Input Box */
@@ -88,4 +95,20 @@ body {
     border-radius: 50%;
     font-size: 20px;
     cursor: pointer;
+}
+
+/* Typing indicator */
+.typing {
+    font-style: italic;
+    color: #aaa;
+    margin-left: 5px;
+}
+
+/* Timestamp */
+.timestamp {
+    font-size: 10px;
+    color: #ccc;
+    display: block;
+    margin-top: 2px;
+    text-align: right;
 }
