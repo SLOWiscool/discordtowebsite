@@ -33,9 +33,17 @@ body {
 /* User list dropdown */
 .user-list {
     background: #222;
-    padding: 10px 15px;
-    border-bottom: 1px solid #333;
-    font-size: 14px;
+    border: 1px solid #333;
+    width: 200px;
+    position: absolute;
+    top: 65px; /* right below header */
+    left: 15px;
+    padding: 10px;
+    border-radius: 8px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .user-list.hidden {
