@@ -1,64 +1,91 @@
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f0f2f5;
+    margin: 0;
+    background: #111;
+    font-family: Arial;
+    color: white;
+}
+
+/* Header */
+.top-bar {
+    background: #181818;
+    height: 65px;
     display: flex;
-    justify-content: center;
     align-items: center;
-    height: 100vh;
+    padding: 0 15px;
+    border-bottom: 1px solid #333;
 }
 
-.container {
-    width: 400px;
-    background: white;
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+}
+
+/* CHAT AREA */
+.chat-box {
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-}
-
-h1 {
-    text-align: center;
-    margin-bottom: 15px;
-    color: #333;
-}
-
-#chat-box {
-    height: 300px;
+    height: calc(100vh - 135px);
     overflow-y: auto;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 10px;
-    margin-bottom: 10px;
-    background: #fafafa;
 }
 
 .message {
-    margin-bottom: 10px;
+    max-width: 70%;
+    padding: 10px 14px;
+    border-radius: 12px;
+    margin: 8px 0;
+    font-size: 16px;
 }
 
-.message .username {
-    font-weight: bold;
-    color: #555;
+/* Their messages (Blue like Snapchat) */
+.them {
+    background: #007AFF;
+    margin-right: auto;
+    border-bottom-left-radius: 4px;
+}
+
+/* My messages (Red like Snapchat) */
+.me {
+    background: #FF4155;
+    margin-left: auto;
+    border-bottom-right-radius: 4px;
+}
+
+/* Input Box */
+.input-area {
+    background: #181818;
+    padding: 10px;
+    display: flex;
+    gap: 10px;
+    border-top: 1px solid #333;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
 }
 
 #message-input {
-    width: calc(100% - 20px);
-    padding: 8px 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+    flex: 1;
+    background: #222;
+    color: white;
+    border: none;
+    padding: 13px;
+    border-radius: 18px;
+    outline: none;
 }
 
 #send-btn {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
+    width: 50px;
     border: none;
-    background: #4a90e2;
+    background: #222;
     color: white;
-    font-weight: bold;
-    border-radius: 5px;
+    border-radius: 50%;
+    font-size: 20px;
     cursor: pointer;
-}
-
-#send-btn:hover {
-    background: #357ABD;
 }
