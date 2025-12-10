@@ -2,89 +2,60 @@ const chatBox = document.getElementById('chat-box');
 const input = document.getElementById('message-input');
 const sendBtn = document.getElementById('send-btn');
 const API = '/api/messages';
-const sound = document.getElementById('receive-sound');
 
-const MY_NAME = "Ayaan"; // Change this per user
+let lastDiscordId = null;
 
-// User list toggle
-const headerName = document.getElementById('header-name');
-const userListDiv = document.getElementById('user-list');
-const usersSpan = document.getElementById('users');
-
-headerName.addEventListener('click', () => {
-    userListDiv.classList.toggle('hidden');
-});
-
-// Format timestamp
-function formatTime(ts) {
-    const d = new Date(ts);
-    return `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+// Request notifications
+if ("Notification" in window && Notification.permission !== "granted") {
+    Notification.requestPermission();
 }
 
-// Render messages
-function renderMessages(messages) {
-    const usernames = new Map(); // store username → avatar
+async function fetchMessages() {
+    const res = await fetch(API);
+    const data = await res.json();
 
-    chatBox.innerHTML = messages.map(m => {
-        usernames.set(m.username, m.avatar); // store avatar
-
-        let mediaHTML = '';
-        if (m.image) mediaHTML += `<img src="${m.image}">`;
-        if (m.video) mediaHTML += `<video src="${m.video}" autoplay loop muted></video>`;
-
-        const cls = m.username === MY_NAME ? 'me' : 'them';
-        const avatarHTML = m.avatar ? `<img src="${m.avatar}" class="msg-avatar">` : '';
-
+    // Update chat box
+    chatBox.innerHTML = data.map(m => {
+        const pfp = `<img src="${m.avatar || 'default.png'}" class="pfp">`;
+        const cls = m.source === 'discord' ? 'them' : 'me';
+        const timestamp = new Date(m.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        let media = '';
+        if (m.image) media = `<img src="${m.image}" class="media">`;
+        if (m.video) media = `<video src="${m.video}" class="media" controls></video>`;
         return `<div class="message ${cls}">
-                    ${avatarHTML}
-                    <div>
-                        <b>${m.username}</b>: ${m.content || ''}
-                        ${mediaHTML}
-                        <span class="timestamp">${formatTime(m.ts)}</span>
-                    </div>
+                    ${pfp}<span class="username">${m.username}</span>
+                    <span class="timestamp">${timestamp}</span>
+                    <div class="content">${m.content || ''}</div>
+                    ${media}
                 </div>`;
     }).join('');
-
-    // Populate vertical user list
-  usersSpan.innerHTML = ''; // clear
-usersSpan.innerHTML = Array.from(usernames)
-    .filter(([username]) => username !== MY_NAME) // exclude self
-    .map(([username, avatar]) => {
-        const avatarImg = avatar ? `<img src="${avatar}" class="user-item-avatar">` : `<div class="user-item-avatar-placeholder"></div>`;
-        return `<div class="user-item">${avatarImg}<span>${username}</span></div>`;
-    })
-    .join('');
-
     chatBox.scrollTop = chatBox.scrollHeight;
 
-    // Play sound if last message is not mine
-    const lastMsg = messages[messages.length-1];
-    if (lastMsg && lastMsg.username !== MY_NAME) sound.play();
-}
-
-
-// Fetch messages
-async function fetchMessages() {
-    try {
-        const res = await fetch(API);
-        const data = await res.json();
-        renderMessages(data);
-    } catch(err) {
-        console.error('Fetch error:', err);
+    // Notify for new Discord messages
+    const newDiscordMsg = data.find(m => m.source === "discord" && m.id !== lastDiscordId);
+    if (newDiscordMsg && Notification.permission === "granted") {
+        new Notification(newDiscordMsg.username, {
+            body: newDiscordMsg.content || "Sent an image/GIF",
+            icon: newDiscordMsg.avatar
+        });
+        lastDiscordId = newDiscordMsg.id;
     }
 }
 
-// Send message
 async function sendMessage() {
     const content = input.value.trim();
     if (!content) return;
-
     await fetch(API, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ username: MY_NAME, content, ts: Date.now() })
+        body: JSON.stringify({ 
+            id: Date.now().toString(), 
+            username: 'Ayaan', 
+            content, 
+            source: 'snapchat', 
+            ts: Date.now() 
+        })
     });
-
     input.value = '';
     fetchMessages();
 }
@@ -92,6 +63,5 @@ async function sendMessage() {
 sendBtn.addEventListener('click', sendMessage);
 input.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
 
-// Refresh every 2s
 setInterval(fetchMessages, 2000);
-fe
+fetchMessages();
