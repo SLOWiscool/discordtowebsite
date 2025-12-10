@@ -1,9 +1,9 @@
 import { MongoClient } from 'mongodb';
 
 const uri = "mongodb+srv://superslashergamez1:adammiah2@cluster0.hxktk9m.mongodb.net/?retryWrites=true&w=majority";
+
 let cachedClient = null;
 
-// Connect to MongoDB and cache the client
 async function connectMongo() {
     if (cachedClient) return cachedClient;
     const client = new MongoClient(uri);
@@ -13,27 +13,33 @@ async function connectMongo() {
 }
 
 export default async function handler(req, res) {
+    const client = await connectMongo();
+    const collection = client.db('discordrelay').collection('messages');
+
     try {
-        // Add CORS headers so frontend can fetch
-        res.setHeader('Access-Control-Allow-Origin', '*');
-        res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
-        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-        if (req.method === 'OPTIONS') return res.status(200).end();
-
-        const client = await connectMongo();
-        const collection = client.db('discordrelay').collection('messages');
-
         if (req.method === 'POST') {
-            // Use req.body directly; only parse if it’s a string
-            const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-            const { username, content } = body;
-
-            if (!username || !content) {
-                return res.status(400).json({ error: 'Missing username or content' });
+            let body;
+            try {
+                body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+            } catch (err) {
+                return res.status(400).json({ error: 'Invalid JSON' });
             }
 
-            await collection.insertOne({ username, content, source: 'snapchat', ts: Date.now() });
+            const { username, content, source, ts, image, video, avatar } = body;
+            if (!username || (!content && !image && !video)) {
+                return res.status(400).json({ error: 'Missing username or message content' });
+            }
+
+            await collection.insertOne({
+                username,
+                content: content || '',
+                source: source || 'snapchat',
+                ts: ts || Date.now(),
+                image: image || null,
+                video: video || null,
+                avatar: avatar || null
+            });
+
             return res.status(200).json({ success: true });
         }
 
@@ -43,8 +49,9 @@ export default async function handler(req, res) {
         }
 
         res.status(405).json({ error: 'Method not allowed' });
+
     } catch (err) {
-        console.error('API error:', err);
-        res.status(500).json({ error: 'Internal Server Error' });
+        console.error(err);
+        res.status(500).json({ error: 'Internal server error' });
     }
 }
