@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat — Varun and Muhammad</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat Relay</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="top-bar">
     <div class="user-info">
-        <img src="https://i.imgur.com/9QW5G1V.png" class="avatar">
-        <span>Varun and Muhammad</span>
+        <img id="header-avatar" src="https://i.imgur.com/9QW5G1V.png" class="avatar">
+        <span id="header-name">Ayaan & Discord</span>
     </div>
 </div>
 
@@ -21,6 +21,8 @@
     <input id="message-input" type="text" placeholder="Send chat">
     <button id="send-btn">&#9658;</button>
 </div>
+
+<audio id="receive-sound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
 
 <script src="client.js"></script>
 </body>
