@@ -2,28 +2,62 @@ const chatBox = document.getElementById('chat-box');
 const input = document.getElementById('message-input');
 const sendBtn = document.getElementById('send-btn');
 const API = '/api/messages';
+const sound = document.getElementById('receive-sound');
 
-async function fetchMessages() {
-    const res = await fetch(API);
-    const data = await res.json();
+const MY_NAME = "Ayaan"; // Change for each user
 
-    chatBox.innerHTML = data.map(m => `
-        <div class="message ${m.username === 'Ayaan' ? 'me' : 'them'}">
-            ${m.content}
-        </div>
-    `).join('');
+// Helper to format timestamp
+function formatTime(ts) {
+    const d = new Date(ts);
+    return `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+}
+
+// Render messages
+function renderMessages(messages) {
+    chatBox.innerHTML = messages.map(m => {
+        let mediaHTML = '';
+        // Images
+        if (m.image) mediaHTML += `<img src="${m.image}">`;
+        // GIFs or videos
+        if (m.video) mediaHTML += `<video src="${m.video}" autoplay loop muted></video>`;
+
+        const cls = m.username === MY_NAME ? 'me' : 'them';
+        return `<div class="message ${cls}">
+                    <b>${m.username}</b>: ${m.content || ''}
+                    ${mediaHTML}
+                    <span class="timestamp">${formatTime(m.ts)}</span>
+                </div>`;
+    }).join('');
 
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
+// Fetch messages
+async function fetchMessages() {
+    try {
+        const res = await fetch(API);
+        const data = await res.json();
+        renderMessages(data);
+
+        // Play sound for new messages from other users
+        const lastMsg = data[data.length-1];
+        if (lastMsg && lastMsg.username !== MY_NAME) sound.play();
+    } catch(err) {
+        console.error('Fetch error:', err);
+    }
+}
+
+// Send message
 async function sendMessage() {
     const content = input.value.trim();
     if (!content) return;
+
     await fetch(API, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({username: 'Ayaan', content, source: 'snapchat'})
+        body: JSON.stringify({ username: MY_NAME, content, ts: Date.now() })
     });
+
     input.value = '';
     fetchMessages();
 }
@@ -31,5 +65,6 @@ async function sendMessage() {
 sendBtn.addEventListener('click', sendMessage);
 input.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
 
-setInterval(fetchMessages, 1500);
+// Auto-refresh
+setInterval(fetchMessages, 2000);
 fetchMessages();
